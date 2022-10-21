@@ -1,0 +1,43 @@
+version: "3"
+services:
+
+  node:
+   build: .
+   command: "npm run start"
+   working_dir: /home/johnbueno/node/server
+   environment:
+    - NODE_ENV=production
+   expose:
+    - "3000"
+   ports:
+     - "3000:3000" 
+   networks:
+      - postgres-compose-network
+
+  postgres-compose:
+    image: postgres
+    environment:
+      POSTGRES_USERNAME: "postgres"
+      POSTGRES_PASSWORD: "john"
+    ports:
+      - "5432:5432"
+    volumes:
+      - /home/johnbueno/PostgreSQL:/var/lib/postgresql/data
+    networks:
+      - postgres-compose-network
+      
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgres@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "john"
+    ports:
+      - "15432:80"
+    depends_on:
+      - postgres-compose
+    networks:
+      - postgres-compose-network
+
+networks: 
+  postgres-compose-network:
+    driver: bridge
